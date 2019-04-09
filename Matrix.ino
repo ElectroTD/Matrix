@@ -47,13 +47,16 @@ void setup()
   setupHardware();
   specialBoot();
   setupUSB();
+  Wireless.init();
 
   #ifdef DEBUG
   CompositeSerial.println("Setup Complete");
   #endif
 
   mainTimer.recordCurrent();
-  while(!USBComposite.isReady() || !Serial4) //Serial4 will always be true
+
+  /*
+  while(!USBComposite.isReady()) //Serial4 will always be true
   {
     if (mainTimer.isLonger(10000))
     {
@@ -73,6 +76,8 @@ void setup()
       }
     }
   }
+  */
+
 
   switch(bootAnimationSelector)
   {
@@ -86,10 +91,6 @@ void setup()
 
   LED.fill(0x000000);
   LED.update();
-
-  #ifdef DEBUG
-  CompositeSerial.println("Enter Main Program");
-  #endif
 }
 
 void readKey()

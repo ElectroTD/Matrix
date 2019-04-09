@@ -46,7 +46,7 @@ public:
 private:
   Timer uiTimer;
   bool hadAction = false;
-  u8 brightness_cache;
+  u8 brightness_cache = 160;
 };
 
 //extern UI UI;

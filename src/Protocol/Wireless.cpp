@@ -4,9 +4,13 @@ extern MIDI Midi;
 
 Wireless::Wireless()
 {
-  Serial4.begin(115200);
+
 }
 
+void Wireless::init()
+{
+  Serial4.begin(9600);
+}
 
 void Wireless::poll()
 {
@@ -21,6 +25,11 @@ void Wireless::getMIDI()
 {
   byte midipacket[3];
   Serial4.readBytes(midipacket,3);
+  CompositeSerial.print(midipacket[0]);
+  CompositeSerial.print(" ");
+  CompositeSerial.print(midipacket[1]);
+  CompositeSerial.print(" ");
+  CompositeSerial.println(midipacket[2]);
   Midi.noteOn(midipacket[0],midipacket[1],midipacket[2]);
 }
 
