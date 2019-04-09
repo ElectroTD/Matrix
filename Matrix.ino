@@ -26,6 +26,7 @@ NexusRevamped while USB unreconized
 #include "src/HAL/Timer.h"
 //#include "src/Protocol/USBmidi.h"
 #include "src/Protocol/MIDI.h"
+#include "src/Protocol/Wireless.h"
 //#include "src/protocol/M2P.h"
 #include "src/Components/UI.h"
 
@@ -35,6 +36,7 @@ MIDI Midi;
 LED LED;
 KeyPad KeyPad;
 Timer mainTimer;
+Wireless Wireless;
 
 void setup()
 {
@@ -51,7 +53,7 @@ void setup()
   #endif
 
   mainTimer.recordCurrent();
-  while(!USBComposite.isReady())
+  while(!USBComposite.isReady() || !Serial4) //Serial4 will always be true
   {
     if (mainTimer.isLonger(10000))
     {
@@ -113,11 +115,13 @@ void readKey()
         if(midi_enable)
         {
           Midi.sentXYon(KeyPad.list[i].xy, KeyPad.list[i].velocity);
+          Wireless.sentXYon(KeyPad.list[i].xy, KeyPad.list[i].velocity);
         }
       }
       else
       {
         Midi.sentXYoff(KeyPad.list[i].xy, 0);
+        Wireless.sentXYoff(KeyPad.list[i].xy, 0);
       }
     }
   }
@@ -176,6 +180,7 @@ void loop()
   // // if (midi_enable);
   // if (mainTimer.tick(1000/fps))
   Midi.poll();
+  Wireless.poll();
   // // if (m2p_enable)
   // // CDC.Poll();
 
