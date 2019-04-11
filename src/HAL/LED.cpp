@@ -20,11 +20,7 @@ void LED::init()
   switch(led_pin)
   {
     case PB7:
-    FastLED.addLeds<NEOPIXEL, PB7>(leds, NUM_TOTAL_LEDS);
-    break;
-
-    case PC7:
-    FastLED.addLeds<NEOPIXEL, PC7>(leds, NUM_TOTAL_LEDS);
+    FastLED.addLeds<NEOPIXEL, PB7>(leds, NUM_LEDS);
     break;
   }
 
@@ -32,7 +28,7 @@ void LED::init()
   FastLED.setCorrection(led_color_correction);
   FastLED.setTemperature(0xFFFFFFFF);
   //FastLED.setMaxRefreshRate(fps);
-  //LED::dynamicBrightness(max_mAh);
+  LED::dynamicBrightness(max_mAh);
 }
 
 void LED::setBrightness(u8 b)
@@ -49,16 +45,9 @@ void LED::dynamicBrightness(u16 mah)
 void LED::fill(u32 WRGB, bool overlay /*= false*/)
 {
   //fill_solid(leds,NUM_TOTAL_LEDS,CRGB::Black);
-  for(int i = 0; i < NUM_TOTAL_LEDS; i++)
+  for(int i = 0; i < NUM_LEDS; i++)
   {
-    if(!overlay_mode || overlay)
-    {
       leds[i] = WRGB;
-    }
-    else
-    {
-      buffer[i] = WRGB;
-    }
   }
   //FastLED.show();
 }
@@ -133,28 +122,7 @@ void LED::setHEX(s16 index, u32 hex, bool overlay /*= false*/, bool ignore_gamma
   if(index < 0)
   return;
 
-  if(!overlay_mode || overlay)
-  {
-    if(gamma_enable && !ignore_gamma)
-    {
-      leds[indexRotation(index)] = hex;
-    }
-    else
-    {
-      leds[indexRotation(index)] = applyGamma(hex);
-    }
-  }
-  else
-  {
-    if(gamma_enable && !ignore_gamma)
-    {
-      buffer[indexRotation(index)] = hex;
-    }
-    else
-    {
-      buffer[indexRotation(index)] = applyGamma(hex);
-    }
-  }
+  leds[index] = hex;
 }
 
 void LED::setPalette(s16 index, u8 pick_palette, u8 colour, bool overlay /*= false*/)
@@ -163,199 +131,9 @@ void LED::setPalette(s16 index, u8 pick_palette, u8 colour, bool overlay /*= fal
 }
 
 
-// XY
-void LED::offXY(u8 xy, bool overlay /*= false*/)
-{
-  LED::setXYHEX(xy, 0, overlay);
-}
-
-void LED::onXY(u8 xy, bool overlay /*= false*/)
-{
-  LED::setXYHEX(xy, 0xFFFFFFFF, overlay);
-}
-
-void LED::setXYW(u8 xy, u8 w, bool overlay /*= false*/)
-{
-  LED::setXYHEX(xy, w * 0x10000 + w * 0x100 + w, overlay);
-}
-
-void LED::setXYRGB(u8 xy, u8 r, u8 g, u8 b, bool overlay /*= false*/)
-{
-  LED::setXYHEX(xy, r * 0x10000 + g * 0x100 + b, overlay);
-}
-
-void LED::setXYWRGB(u8 xy, u8 w, u8 r, u8 g, u8 b, bool overlay /*= false*/)
-{
-  LED::setXYHEX(xy, w * 0x1000000 + r * 0x10000 + g * 0x100 + b, overlay);
-}
-
-
-void LED::setXYHEX(u8 xy, u32 hex, bool overlay /*= false*/, bool ignore_gamma /*= false*/)
-{
-  // #ifdef DEBUG
-  // CompositeSerial.print("LED XY \t");
-  // CompositeSerial.print(xy, HEX);
-  // CompositeSerial.print("\t");
-  // CompositeSerial.println(hex, HEX);
-  // #endif
-
-  if(!overlay_mode || overlay)
-  {
-    if(gamma_enable && !ignore_gamma)
-    {
-      leds[xyToIndex(xy)] = applyGamma(hex);
-    }
-    else
-    {
-      leds[xyToIndex(xy)] = hex;
-    }
-  }
-  else
-  {
-    if(gamma_enable && !ignore_gamma)
-    {
-      buffer[xyToIndex(xy)] = applyGamma(hex);
-    }
-    else
-    {
-      buffer[xyToIndex(xy)] = hex;
-    }
-  }
-}
-
-void LED::setXYPalette(u8 xy, u8 pick_palette, u8 colour, bool overlay /*= false*/)
-{
-  LED::setXYHEX(xy, palette[pick_palette][colour], overlay, true);
-}
-
 //Processing
 
 void LED::update()
 {
   FastLED.show();
-}
-
-void LED::rainbow()
-{
-  int hue = 0;
-  while(hue != 255)
-  {
-    fill_rainbow(leds, NUM_LEDS, hue++);
-    FastLED.show();
-  }
-}
-
-// void LED::fillRegionOff(u8 xy1, u8 xy2, bool overlay /*= false*/)
-// {
-//   LED::fillRegionHEX(xy1, xy2, 0, overlay);
-// }
-//
-// void LED::fillRegionOn(u8 xy1, u8 xy2, bool overlay /*= false*/)
-// {
-//   LED::fillRegionHEX(xy1, xy2, 0xFFFFFFFF, overlay);
-// }
-//
-// void LED::fillRegionW(u8 xy1, u8 xy2, u8 w, bool overlay /*= false*/)
-// {
-//   LED::fillRegionHEX(xy1, xy2, w * 0x10000 + w * 0x100 + w, overlay);
-// }
-//
-// void LED::fillRegionRGB(u8 xy1, u8 xy2, u8 r, u8 g, u8 b, bool overlay /*= false*/)
-// {
-//   LED::fillRegionHEX(xy1, xy2, r * 0x10000 + g * 0x100 + b, overlay);
-// }
-//
-// void LED::fillRegionWRGB(u8 xy1, u8 xy2, u8 w, u8 r, u8 g, u8 b, bool overlay /*= false*/)
-// {
-//   LED::fillRegionHEX(xy1, xy2, w *  0x1000000 + r * 0x10000 + g * 0x100 + b, overlay);
-// }
-//
-// void LED::fillRegionHEX(u8 xy1, u8 xy2, u32 hex, bool overlay /*= false*/, bool ignore_gamma /*= false*/)
-// {
-//   u8 x1 = (xy1 & 0xF0) >> 4;
-//   u8 y1 = xy1 & 0x0F;
-//   u8 x2 = (xy2 & 0xF0) >> 4;
-//   u8 y2 = xy2 & 0x0F;
-//   //Reorder
-//   if(x1 > x2)
-//   {
-//     u8 c = x1;
-//     x1 = x2;
-//     x2 = c;
-//   }
-//   if(y1 > y2)
-//   {
-//     u8 c = y1;
-//     y1 = y2;
-//     y2 = c;
-//   }
-//
-//   for(x1; x1 <= x2; x1++)
-//   {
-//     for(y1; y1 <= y2; y1++)
-//     {
-//       LED::setXYHEX(x1 * 0x10 + y1, hex, overlay, ignore_gamma);
-//     }
-//   }
-// }
-//
-// void LED::fillRegionPalette(u8 xy1, u8 xy2, u8 p, u8 c, bool overlay /*= false*/)
-// {
-//   LED::fillRegionHEX(xy1, xy2, palette[p][c], overlay, true);
-// }
-
-u32 LED::applyGamma(u32 hex)
-{
-  return
-  led_gamma[(hex & 0xff000000) >> 24] * 0x1000000 +
-  led_gamma[(hex & 0x00ff0000) >> 16] *0x10000 +
-  led_gamma[(hex & 0x0000ff00) >> 8] *0x100 +
-  led_gamma[(hex & 0x000000ff)];
-}
-
-void LED::enableOverlayMode()
-{
-  if (!overlay_mode)
-  {
-    overlay_mode = true;
-    for(int i = 0; i < NUM_TOTAL_LEDS; i++)
-    {
-      buffer[i] = leds[i];
-    }
-  }
-  LED::fill(0, true);
-}
-
-void LED::disableOverlayMode()
-{
-  if(overlay_mode)
-  {
-    overlay_mode = false;
-    //LED::fill(0);
-    for(int i = 0; i < NUM_TOTAL_LEDS; i++)
-    {
-      leds[i] = buffer[i];
-    }
-  }
-  LED::update();
-}
-
-u32 LED::readXYLED(u8 xy)
-{
-  return leds[xyToIndex(xy)];
-}
-
-u32 LED::readLED(u8 index)
-{
-  return leds[indexRotation(index)];
-}
-
-u32 LED::toBrightness(u32 hex, float f)
-{
-  u8 w = (((hex & 0xFF000000) >> 24) * f);
-  u8 r = (((hex & 0x00FF0000) >> 16) * f);
-  u8 g = (((hex & 0x0000FF00) >> 8) * f);
-  u8 b = ((hex & 0x000000FF) * f);
-
-  return w * 0x1000000 + r * 0x10000 + g * 0x100 + b;
 }

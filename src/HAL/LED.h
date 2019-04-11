@@ -17,7 +17,6 @@ class LED
 public:
   LED();
   void init();
-  void nextBrightnessState();
   void setBrightness(u8 b);
   void dynamicBrightness(u16 mah);
   void fill(u32 WRGB, bool overlay = false);
@@ -33,36 +32,11 @@ public:
   void setHEX(s16 index, u32 hex, bool overlay = false, bool ignore_gamma = false);
   void setPalette(s16 index, u8 pick_palette, u8 colour, bool overlay = false);
 
-  //XY
-  void offXY(u8 xy, bool overlay = false);
-  void onXY(u8 xy, bool overlay = false);
-  void setXYW(u8 xy, u8 w, bool overlay = false);
-  void setXYRGB(u8 xy, u8 w, u8 g, u8 b, bool overlay = false);
-  void setXYWRGB(u8 xy, u8 w, u8 r, u8 g, u8 b, bool overlay = false);
-  void setXYHEX(u8 xy, u32 WRGB, bool overlay = false, bool ignore_gamma = false);
-  void setXYPalette(u8 xy, u8 pick_palette, u8 colour, bool overlay = false);
-
   //Processing
   void update();
-  void rainbow();
-  // void fillRegionOff(u8 xy1, u8 xy2, bool overlay = false);
-  // void fillRegionOn(u8 xy1, u8 xy2, bool overlay = false);
-  // void fillRegionW(u8 xy1, u8 xy2, u8 w, bool overlay = false);
-  // void fillRegionWRGB(u8 xy1, u8 xy2, u8 w, u8 r, u8 g, u8 b, bool overlay = false);
-  // void fillRegionRGB(u8 xy1, u8 xy2, u8 r, u8 g, u8 b, bool overlay = false);
-  // void fillRegionHEX(u8 xy1, u8 xy2, u32 hex, bool overlay = false , bool ignore_gamma = false);
-  // void fillRegionPalette(u8 xy1, u8 xy2, u8 p, u8 c, bool overlay = false);
-  u32 applyGamma(u32 hex);
-  void enableOverlayMode();
-  void disableOverlayMode();
-  u32 readXYLED(u8 xy);
-  u32 readLED(u8 index);
-  u32 toBrightness(u32 hex, float f);
 
 private:
-  bool overlay_mode = false;
-  CRGB leds[NUM_TOTAL_LEDS];
-  CRGB buffer[NUM_TOTAL_LEDS];
+  CRGB leds[NUM_LEDS];
 };
 
 //extern LED LED;
