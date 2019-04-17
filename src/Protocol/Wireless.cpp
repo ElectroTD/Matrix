@@ -25,11 +25,13 @@ void Wireless::getMIDI()
 {
   byte midipacket[3];
   Serial4.readBytes(midipacket,3);
-  CompositeSerial.print(midipacket[0]);
-  CompositeSerial.print(" ");
-  CompositeSerial.print(midipacket[1]);
-  CompositeSerial.print(" ");
-  CompositeSerial.println(midipacket[2]);
+  CompositeSerial.print("Read from Matrix: ");
+  CompositeSerial.print(midipacket[0], DEC);
+  CompositeSerial.print(' ');
+  CompositeSerial.print(midipacket[1], DEC);
+  CompositeSerial.print(' ');
+  CompositeSerial.print(midipacket[2], DEC);
+  CompositeSerial.println();
   Midi.noteOn(midipacket[0],midipacket[1],midipacket[2]);
 }
 
