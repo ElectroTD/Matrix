@@ -58,9 +58,9 @@ typedef volatile const int64_t vsc64;
 
 //#define DEBUG
 
-#define DEVICENAME "LightStrap by 203"
+#define DEVICENAME "LightStrip Controller by 203"
 #define MAUNFACTURERNAME "203 Industries"
-#define SERIALSTRING "Prototype"
+#define SERIALSTRING "Thanks for using."
 #define VID  0x0203
 #define PID  0x0801
 

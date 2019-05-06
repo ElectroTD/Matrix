@@ -22,3 +22,8 @@ void setupUSB()
   USBComposite.begin();
 
 }
+
+void setupHardware()
+{
+  LED.init();
+}
